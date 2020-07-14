@@ -20,7 +20,7 @@ textarea{
   border-radius: 0;
   border-bottom: 10px solid black;
 }
-
+/* is this a typo I think texarea is the calendar event and in html file the top description has class lead instead of description, .lead was never used in css */
 .description{
   white-space: pre-wrap;
 }
