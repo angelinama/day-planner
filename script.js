@@ -5,62 +5,64 @@ const startHour = 9;
 //function to generate all the time slots rows
 function generateSlots() {
     //according to stylesheet the outer wrap has class "time-block"
-    var olEl = document.createElement('ol');
-    olEl.className = "time-block";
+    var olEl = $("<ol>");
+    olEl.attr("class", "ime-block");
     $('div.container').append(olEl);
 
     //create each row
-    for (var h = startHour; h < startHour + totalHour; h++) {
-        var liEl = document.createElement('li');
-        liEl.className = "row"; //also based on style sheet
+    for (var i = startHour; i < startHour + totalHour; i++) {
+        var liEl = $("<li>");
+        liEl.attr("class", "row"); //also based on style sheet
         $('ol').append(liEl);
 
         var str = '';
         //format the time label, i.e. 9am
+        var h = i % 24; //make sure it's still correct if the calendar is till the second day
         if (h < 12) {
             str = h + "AM";
         } else if (h == 12) {
             str = h + "PM";
         } else {
-            str = h - 12 + "PM";
+            str = (h - 12) + "PM";
         }
 
         //each row has one one label, one textarea input event, one save button
-        var label = document.createElement('label');
-        label.className = "col-1 hour py-3";
-        label.textContent = str;
+        var label = $("<label>");
+        label.attr("class", "col-1 hour py-3");
+        label.text(str);
         
-        var inputEl = document.createElement('textarea');
-        inputEl.className = "col-10";
-        inputEl.id = str;
-        inputEl.setAttribute('data-begin', h); //time slot hour
-        label.setAttribute("for", inputEl.id);
-        inputEl.value = localStorage.getItem(inputEl.id); //read value from localStorage in case user refresh page
+        var inputEl = $("<textarea>");
+        inputEl.attr({
+            'class': "col-10",
+            'id': str,
+            'data-begin': h, //time slot hour
+        });
 
-        var saveBtn = document.createElement('button');
-        saveBtn.className = "col-1 saveBtn";
+        label.attr("for", inputEl.attr('id'));
+        inputEl.val(localStorage.getItem(inputEl.attr('id'))); //read value from localStorage in case user refresh page
+
+        var saveBtn = $('<button>');
+        saveBtn.attr("class", "col-1 saveBtn");
         //font awesome save icon
-        var iEl = document.createElement('i');
-        iEl.className = "fa fa-save";
-        saveBtn.appendChild(iEl);
+        saveBtn.html("<i class='fa fa-save'></i>")
 
-        liEl.appendChild(label);
-        liEl.appendChild(inputEl);
-        liEl.appendChild(saveBtn);  
+        liEl.append(label).append(inputEl).append(saveBtn);  
         
         //save button onclick listener
-        saveBtn.addEventListener('click', function(e) {callback(e.target)});
+        saveBtn.click(function(e) {callback(e)});
     }
 }
 
+//TODO...change this function to Jquery
 //callback function for click save button eventlistener
-function callback(element) {
-    if (element.matches('i')) { // click i tag will also trigger button click, here we want the sibling of savebtn not <i>
-        element = element.parentNode;
+function callback(event) {
+    var element = $( event.target );
+    if (element.is( "i" )) { // click i tag will also trigger button click, here we want the sibling of savebtn not <i>
+        element = element.parent();
     }
-    var inputEl = element.previousSibling;
-    var key = inputEl.id;
-    var value = inputEl.value;
+    var inputEl = element.prev();
+    var key = inputEl.attr('id');
+    var value = inputEl.val();
     localStorage.setItem(key, value);
 }
 
@@ -86,15 +88,14 @@ function setTime() {
 function changeClass(element, target) {
     var classList = ['past', 'present','future'];
     var idx = classList.indexOf(target);
-    classList.splice(idx, 1);
 
     for (var i = 0; i < classList.length; i++) {
-        if (element.hasClass(classList[i])) {
-            element.removeClass(classList[i]);
+        if (i === idx) {
+            element.toggleClass(classList[i], true);
+        } else {
+            element.toggleClass(classList[i], false);
         }
     }
-
-    element.addClass(target);
 }
 
 
