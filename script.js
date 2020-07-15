@@ -33,10 +33,9 @@ function generateSlots() {
         var inputEl = document.createElement('textarea');
         inputEl.className = "col-10";
         inputEl.id = str;
-        //each time slot start from current hour end (not included) endTime
-        inputEl.setAttribute('data-begin', h);
-        // inputEl.setAttribute('data-end', h + 1);
+        inputEl.setAttribute('data-begin', h); //time slot hour
         label.setAttribute("for", inputEl.id);
+        inputEl.value = localStorage.getItem(inputEl.id); //read value from localStorage in case user refresh page
 
         var saveBtn = document.createElement('button');
         saveBtn.className = "col-1 saveBtn";
@@ -47,10 +46,23 @@ function generateSlots() {
 
         liEl.appendChild(label);
         liEl.appendChild(inputEl);
-        liEl.appendChild(saveBtn);    
+        liEl.appendChild(saveBtn);  
+        
+        //save button onclick listener
+        saveBtn.addEventListener('click', function(e) {callback(e.target)});
     }
 }
-//TODO...event listener when click save
+
+//callback function for click save button eventlistener
+function callback(element) {
+    if (element.matches('i')) { // click i tag will also trigger button click, here we want the sibling of savebtn not <i>
+        element = element.parentNode;
+    }
+    var inputEl = element.previousSibling;
+    var key = inputEl.id;
+    var value = inputEl.value;
+    localStorage.setItem(key, value);
+}
 
 // change color class for time slots and refresh the date in description
 function setTime() {
@@ -91,6 +103,7 @@ $( document ).ready(function() {
     setTime(); // set time in description and color class in each row after page loaded
 
     //timer to trigger update time slot every hour on the hour
+    //if you really want to be super accurate, we can even start timer on the minute using setTimeout()
     var timer = setInterval(function() {
         curTime = moment(); //update current time every minite
         var curMin = curTime.minute();
