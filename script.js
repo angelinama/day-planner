@@ -1,6 +1,6 @@
 var curTime = moment();
 const totalHour = 9; //9am to 5pm, set consts to avoid magic number in the codes
-const startHour = 18; 
+const startHour = 9; 
 
 //function to generate all the time slots rows
 function generateSlots() {
