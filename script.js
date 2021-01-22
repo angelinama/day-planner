@@ -6,7 +6,7 @@ const startHour = 9;
 function generateSlots() {
     //according to stylesheet the outer wrap has class "time-block"
     var olEl = $("<ol>");
-    olEl.attr("class", "ime-block");
+    olEl.attr("class", "time-block");
     $('div.container').append(olEl);
 
     //create each row
